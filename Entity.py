@@ -1,6 +1,7 @@
 import DataBase as Database
 import Inventory
 import Items
+import World
 #Constitution,Strength,Defense,Intelligence
 players = []
 enemies = []
@@ -36,13 +37,17 @@ class Player(Entity):
         Entity.__init__(self,10,10)
         self.player_id = player_id
         self.player_name = player_name
-        self.available_commands = ["search","fight"]
+        self.available_commands = ["search","fight","travel"]
         self.status = "Idle"
-    def action(self,action):
+        self.position = (1,1)
+        self.locations = World.world.locations
+    def action(self,action,args = None):
         if(action == "fight"):
             return self.fight()
         if(action == "search"):
             return self.search()
+        if(action == "travel"):
+            return self.travel(args)
     def fight(self):
         enemy_list_player = [enemy for enemy in enemies if enemy.attached_player == self.player_id]
         if(len(enemy_list_player)!=0):
@@ -50,12 +55,31 @@ class Player(Entity):
             return ("You choose to fight the monsters")
         else:
             return ("There are no enemies to fight ##This should not happen in a real version")
+        
     def search(self):
         enemyE = Zombie(self.player_id)
         enemies.append(enemyE)
         enemy_list_player = [enemy for enemy in enemies if enemy.attached_player == self.player_id]
         enemy = enemy_list_player[0]
         return(enemy.equips.equips["weapon"].name)
+    
+    def travel(self,target_location = None):
+        if(not target_location):
+            message = "Available Locations:"
+            i = 1
+            for location in self.locations:
+                distancelocation = (abs(self.position[0]-location.position[0]),abs(self.position[1]-location.position[1]))
+                message += "\n "+str(i)+" - "+ location.name + " distance - "+str(distancelocation)
+                if(distancelocation[0]==0 and distancelocation[1] ==0):
+                    message +=" - Current Location"
+                if(location.__class__.__name__ == "City"):
+                    for build in location.buildings:
+                        message += (" \n  > "+build.name)
+                i+=1
+            return message
+        else:
+            self.position = self.locations[int(target_location)-1].position
+            return("You travel to "+self.locations[int(target_location)-1].name)
 def player_exists(player_id):
     player = Database.select("players","*","WHERE id='"+player_id+"'")
     if(player):

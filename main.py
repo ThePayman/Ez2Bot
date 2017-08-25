@@ -4,7 +4,7 @@ import logging
 import asyncio
 import DataBase
 import Entity
-
+import World
 
     
 bot = commands.Bot(command_prefix="r/")
@@ -35,16 +35,24 @@ async def actions(ctx):
             await bot.say(str(i+1) + " - " +player.available_commands[i])
 
 @bot.command(pass_context = True)
-async def do(ctx, *, action = None):
+async def do(ctx, *, args = None):
+    #args is a string, needs to be separated into multiple args
+    try:
+        action = args[0]
+        arg = args[2]
+    except:
+        action = args[0]
+        arg = None
     if(Entity.player_exists(ctx.message.author.id)):
         player = [player for player in Entity.players if player.player_id == ctx.message.author.id][0]
         try:
             action = int(action)
             if(action in range(len(player.available_commands)+1)):
-                 await bot.say(player.action(player.available_commands[action-1]))
-        except ValueError:
-            if(action in player.available_commands):
-                await bot.say(player.action(action))
+                action  = player.available_commands[action-1]
+        except:
+            pass
+        if(action in player.available_commands):
+            await bot.say(player.action(action,arg))
                 
 @bot.command(pass_context = True)
 async def search(ctx):
