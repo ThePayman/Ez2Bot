@@ -25,6 +25,7 @@ class Entity:
         self.max_hp_constant = Database.select("entity_base","max_hp_constant","WHERE type='"+self.__class__.__name__+"'")
         for i in self.max_hp_constant:
             return(i[0])
+#enemy entities inside a player entity
 class Enemy:
     def __init__(self,attached_player):
         self.attached_player = attached_player
