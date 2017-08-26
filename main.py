@@ -5,7 +5,7 @@ import asyncio
 import DataBase
 import Entity
 import World
-
+import Command
     
 bot = commands.Bot(command_prefix="r/")
 list = []
@@ -53,6 +53,10 @@ async def do(ctx, *, args = None):
             pass
         if(action in player.available_commands):
             await bot.say(player.action(action,arg))
+
+@bot.command(pass_context = True)
+async def travel(ctx, *, args = None):
+    Command.command(ctx,arg)
                 
 @bot.command(pass_context = True)
 async def search(ctx):
