@@ -29,5 +29,17 @@ class Castle(Building):
     def __init__(self,name):
         Building.__init__(self,name)
 
-user_position = (0,1)
 world = World()
+
+def distance_between_positions(position_1,position_2):
+    return (abs(position_1[0]-position_2[0]),abs(position_1[1]-position_2[1]))
+
+def find_location_index(arg_list):
+    location_name = ""
+    for index in range(len(arg_list)):
+        location_name+=arg_list[index]
+        if(index != len(arg_list)-1):\
+                 location_name+=" "
+    index = next((i for i, location in enumerate(world.locations) if location.name.lower() == location_name.lower()))
+    return(index)
+

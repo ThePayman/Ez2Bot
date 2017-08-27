@@ -8,6 +8,7 @@ try:
         db = "Python"
         )
 except Exception as e:
+    print("No connection to db, stopping program...")
     sys.exit("Connection to db failed")
 db.autocommit(True)
 def find_next_id_db(type):

@@ -33,6 +33,7 @@ class Zombie(Entity,Enemy):
     def __init__(self,attached_player,max_hp = None,strength = None):
         Enemy.__init__(self,attached_player)
         Entity.__init__(self,max_hp,strength)
+        
 class Player(Entity):
     def __init__(self,player_id,player_name):
         Entity.__init__(self,10,10)
@@ -64,12 +65,13 @@ class Player(Entity):
         enemy = enemy_list_player[0]
         return(enemy.equips.equips["weapon"].name)
     
-    def travel(self,target_location = None):
-        if(not target_location):
+    def travel(self,arg_list = None):
+        if(not arg_list):
             message = "Available Locations:"
             i = 1
             for location in self.locations:
-                distancelocation = (abs(self.position[0]-location.position[0]),abs(self.position[1]-location.position[1]))
+                #Needs some polish, distance calculation based on 2 vectores and city behavior 
+                distancelocation = World.distance_between_positions(self.position,location.position)
                 message += "\n "+str(i)+" - "+ location.name + " distance - "+str(distancelocation)
                 if(distancelocation[0]==0 and distancelocation[1] ==0):
                     message +=" - Current Location"
@@ -79,8 +81,19 @@ class Player(Entity):
                 i+=1
             return message
         else:
-            self.position = self.locations[int(target_location)-1].position
-            return("You travel to "+self.locations[int(target_location)-1].name)
+            target_location = arg_list[0]
+            try:
+                target_location = int(target_location)-1
+            except:
+                target_location = World.find_location_index(arg_list)
+            if(len(self.locations)>int(target_location)):
+                if(self.position != self.locations[int(target_location)].position):
+                    self.position = self.locations[int(target_location)].position
+                    return("You travel to "+self.locations[int(target_location)].name)
+                else:
+                    return("You already are at this location")
+            else:
+                return("ERROR: The selected location doesnt exist")
 def player_exists(player_id):
     player = Database.select("players","*","WHERE id='"+player_id+"'")
     if(player):

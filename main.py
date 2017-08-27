@@ -6,10 +6,8 @@ import DataBase
 import Entity
 import World
 import Command
-    
 bot = commands.Bot(command_prefix="r/")
 list = []
-
 @bot.command(pass_context = True)
 async def IsGay(ctx, *, member : discord.Member = None):
     if(member):
@@ -56,7 +54,7 @@ async def do(ctx, *, args = None):
 
 @bot.command(pass_context = True)
 async def travel(ctx, *, args = None):
-    Command.command(ctx,arg)
+    await bot.say(Command.command(ctx,"travel",args))
                 
 @bot.command(pass_context = True)
 async def search(ctx):
