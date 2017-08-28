@@ -1,13 +1,8 @@
 import DataBase as Database
 import json
 class Item:
-    def __init__(self,id):
+    def __init__(self,id,name = None,price = None):
         self.id = id
-
-class Weapon(Item):
-    def __init__(self,id,name= None,price = None,damage = None,strenght_multiplier = None):
-        Item.__init__(self,id)
-        item_database = Database.select("weapons","*","WHERE id = '"+str(self.id)+"'")[0]
         if not name:
             self.name = item_database[2]
         else:
@@ -18,13 +13,17 @@ class Weapon(Item):
         else:
             self.price = price
 
-        
-        if not damage:
+class Weapon(Item):
+    def __init__(self,id,name= None,price = None,damage = None,strenght_multiplier = None, database = True):
+        if(database):
+            self.item_database = Database.select(self.__class__.__name__.lower(),"*","WHERE id = '"+str(self.id)+"'")[0]
+        Item.__init__(self,id,name,database)
+        if not damage and database:
             self.damage = item_database[4]
         else:
             self.damage = damage
             
-        if not strenght_multiplier:
+        if not strenght_multiplier and database:
             self.strength_multiplier = item_database[5]
         else:
             self.strength_multiplier = strength_multiplier
